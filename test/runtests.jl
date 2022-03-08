@@ -1,7 +1,7 @@
 using MAE250B
 using Test
 using Literate
-using JLD # need this to ensure JLD works inside .jl files for Literate use
+#using JLD # need this to ensure JLD works inside .jl files for Literate use
 #using Plots # prevents annoying messages inside the generated notebooks
 
 outputdir = "../notebook"
