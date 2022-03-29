@@ -4,11 +4,16 @@ module MAE250B
 using IJulia
 
 using Reexport
+using Interpolations
 
 #using Requires
 #using Conda
 
 @reexport using ViscousFlow
+@reexport using LaTeXStrings
+@reexport using OrdinaryDiffEq
+
+export falknerskan
 
 #@reexport using ThermofluidQuantities
 #import ThermofluidQuantities: Unitful
@@ -27,6 +32,11 @@ proj_file = Base.active_project() #Pkg.project().path
 
 
 #const localunits = Unitful.basefactors
+
+include("plot_recipes.jl")
+
+include("boundarylayers.jl")
+include("trajectories.jl")
 
 #=
 function __init__()
