@@ -18,7 +18,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 ViscousFlow = "103da179-b3e4-57c1-99a4-586354eb2c5a"
 
 [compat]
-ColorTypes = "0.10.12"
+ColorTypes = "0.10.12, 0.11"
 IJulia = "1.23"
 Interpolations = "0.12.10"
 LaTeXStrings = "1.3.0"
