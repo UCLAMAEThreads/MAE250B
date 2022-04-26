@@ -13,8 +13,6 @@ using Interpolations
 @reexport using LaTeXStrings
 @reexport using OrdinaryDiffEq
 
-export falknerskan
-
 #@reexport using ThermofluidQuantities
 #import ThermofluidQuantities: Unitful
 
@@ -34,7 +32,6 @@ proj_file = Base.active_project() #Pkg.project().path
 #const localunits = Unitful.basefactors
 
 include("plot_recipes.jl")
-
 include("boundarylayers.jl")
 include("trajectories.jl")
 

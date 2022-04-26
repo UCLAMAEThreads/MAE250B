@@ -95,19 +95,16 @@ using Plots
 ### Generate the velocity profile and other solution features
 Here, we will compute the self-similar velocity profile and compute other
 boundary-layer quantities. The only required input for this `falknerskan` function
-is $\beta$.
-
-It returns the velocity profile `u` (scaled by $U_e$), the vertical coordinate $\eta$,
-and the proportionality constants $C_1$ through $C_4$ described above.
+is $\beta$. It returns the all of the aspects of the solution described above.
 =#
 
 β = 0.0
-u, η, d99, dstar, theta, Cf = falknerskan(β); # I used more descriptive symbols that C1, C2, C3, C4
+sol = falknerskan(β);
 
 #=
 For example, the proportionality constant on the 99 percent thickness is
 =#
-d99
+d99(sol)
 
 #=
 which means that, for $\beta = 0$,
@@ -120,7 +117,7 @@ $$\dfrac{\delta_{99}(x)}{x} = \dfrac{4.91}{\sqrt{Re_x}} $$
 
 Similarly, the momentum thickness:
 =#
-theta
+theta(sol)
 
 #=
 so that
@@ -131,7 +128,13 @@ $$\dfrac{\theta(x)}{x} = \dfrac{0.664}{\sqrt{Re_x}} $$
 #=
 #### Let's plot the profile
 =#
-plot(u,η,xlim=(0,2),ylim=(0,maximum(η)),xlabel=L"F'(\eta) = u/U_e",ylabel=L"\eta = y/\delta(x)")
+plot(u(sol),η(sol),xlim=(0,2),ylim=(0,Inf),xlabel=L"F'(\eta) = u/U_e",ylabel=L"\eta = y/\delta(x)")
+
+#=
+The vertical velocity profile is
+=#
+plot(v(sol),η(sol),xlim=(0,2),ylim=(0,Inf),xlabel=L"v/U_e/Re_x^{1/2}",ylabel=L"\eta = y/\delta(x)")
+
 
 #=
 #### Drag force
@@ -139,3 +142,10 @@ When $\beta = 0$ (Blasius), the drag coefficient on a plate of length $L$ is equ
 
 $$C_D = \dfrac{4\theta(L)}{L} = \dfrac{2.656}{\sqrt{Re_L}}$$
 =#
+
+#=
+If you wish to specify a wall velocity, you can use the optional argument `Vw = `,
+e.g.,
+=#
+sol = falknerskan(β,Vw=0.2)
+plot(u(sol),η(sol),xlim=(0,2),ylim=(0,Inf),xlabel=L"F'(\eta) = u/U_e",ylabel=L"\eta = y/\delta(x)")
