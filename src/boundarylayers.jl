@@ -1,6 +1,6 @@
 ### Boundary layer routines
 
-export u, v, vorticity, eta, η, d99, dstar, theta, Cf, falknerskan
+export u, v, vorticity, dudy, d2udy2, eta, η, d99, dstar, theta, Cf, falknerskan
 
 struct BLSolution{ETAT,UT}
   β :: Float64
@@ -45,10 +45,34 @@ v(sol::MAE250B.BLSolution) = 0.5*(sol.η.*sol.fp - sol.f)
 """
     vorticity(sol::BLSolution) -> Vector{Float64}
 
-Return the array of wall-normal velocities, ``v``, scaled by the
+Return the array of vorticity, ``\\omega``, scaled by the
 boundary layer factor: ``\\omega \\delta(x)/U_e``
 """
 vorticity(sol::MAE250B.BLSolution) = -sol.fpp
+
+"""
+    dudy(sol::BLSolution) -> Vector{Float64}
+
+Return the array of ``du/dy``, scaled by the
+boundary layer factor: ``du/dy (\\delta(x)/U_e)``
+"""
+dudy(sol::MAE250B.BLSolution) = sol.fpp
+
+"""
+    d2udy2(sol::BLSolution) -> Vector{Float64}
+
+Return the array of ``d^2u/dy^2``, scaled by the
+boundary layer factor: ``d^2u/dy^2 (\\delta^2(x)/U_e)``
+"""
+function d2udy2(sol::MAE250B.BLSolution)
+  uyy = zero(sol.fpp)
+  uyy[1] = (sol.fpp[2] - sol.fpp[1])/(sol.η[2] - sol.η[1])
+  for i in 2:lastindex(sol.fpp)-1
+    uyy[i] = (sol.fpp[i+1] - sol.fpp[i-1])/(sol.η[i+1] - sol.η[i-1])
+  end
+  uyy[end] = (sol.fpp[end] - sol.fpp[end-1])/(sol.η[end] - sol.η[end-1])
+  return uyy
+end
 
 
 """
@@ -114,7 +138,7 @@ function fs_integrate(h0,p)
 end
 
 """
-    falknerskan(β[,Vw=0][,ηmax=8][,h0init=1.3])
+    falknerskan(β[,Vw=0][,ηmax=10][,h0init=1.3])
 
 Compute the Falkner-Skan boundary layer solution for parameter `β`,
 where `β` can be a value larger than -0.1999 (the separation case).
@@ -136,9 +160,9 @@ function falknerskan(β;Vw = 0.0,ηmax = 10.0,h0init=1.3,kwargs...)
   h0 = find_zero(x -> fs_integrate(x,p)[1],h0init;kwargs...)
   resid,sol = fs_integrate(h0,p)
 
-  sol = BLSolution(β,Vw,ηmax,_fs_eta(sol),_fs_streamfunction(sol),_fs_velocity(sol),
+  sol = BLSolution(convert(Float64,β),convert(Float64,Vw),convert(Float64,ηmax),_fs_eta(sol),_fs_streamfunction(sol),_fs_velocity(sol),
                     _fs_vorticity(sol),
-                    h0,blthickness_99(sol), blthickness_displacement(sol),
+                    convert(Float64,h0),blthickness_99(sol), blthickness_displacement(sol),
                     blthickness_momentum(sol), blskinfriction(sol))
 
   return sol
