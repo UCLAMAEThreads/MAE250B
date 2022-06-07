@@ -33,6 +33,7 @@ proj_file = Base.active_project() #Pkg.project().path
 
 include("plot_recipes.jl")
 include("boundarylayers.jl")
+include("orrsommerfeld.jl")
 include("trajectories.jl")
 
 #=
